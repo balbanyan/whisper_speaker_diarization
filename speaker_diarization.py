@@ -9,15 +9,19 @@ import numpy as np
 from pydub import AudioSegment
 import tempfile
 import subprocess
+import pandas as pd
+from typing import List, Tuple, Dict, Set
 
 # Check if CUDA is available
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using device: {device}")
 
 # Configuration parameters
-# Adjust these values to control how strictly segments are assigned
-OVERLAP_THRESHOLD = 0.3  # Minimum overlap required (30% instead of 50% to assign more segments)
-FORCE_ASSIGN_ALL = True  # If True, all unassigned segments will be assigned to the closest speaker
+# Short segment thresholds (in seconds)
+SHORT_SEGMENT_THRESHOLD = 0.5  # General short segment threshold
+FULL_OVERLAP_SHORT_THRESHOLD = 1.0  # Threshold for full overlaps
+PARTIAL_OVERLAP_SHORT_THRESHOLD = 2.0  # Threshold for partial overlaps
+SIGNIFICANT_OVERLAP_THRESHOLD = 0.6  # Threshold for significant overlap duration
 
 # Helper function to run FFmpeg commands
 def run_ffmpeg(input_file, output_file, options=None):
@@ -90,19 +94,29 @@ try:
     print("Generating speaker timestamps...")
     timestamp_lines = []
     
-    # Store speaker turns for later use
-    speaker_turns = []
+    # Store speaker turns for later use and convert to DataFrame for easier processing
+    diarization_segments = []
     for turn, _, speaker in diarization.itertracks(yield_label=True):
         start_time = turn.start
         end_time = turn.end
         duration = end_time - start_time
         timestamp_lines.append(f"Speaker {speaker}: {start_time:.3f}s - {end_time:.3f}s (duration: {duration:.3f}s)")
-        speaker_turns.append((start_time, end_time, speaker))
+        diarization_segments.append({
+            "speaker": speaker,
+            "start": start_time,
+            "end": end_time,
+            "duration": duration
+        })
     
     with open("outputs/speaker_timestamps.txt", "w") as f:
         for line in timestamp_lines:
             f.write(line + "\n")
 
+    # Convert to DataFrame for easier processing
+    diar_df = pd.DataFrame(diarization_segments)
+    # Sort by start time
+    diar_df = diar_df.sort_values(by=['start']).reset_index(drop=True)
+    
     print("Loading Whisper model...")
     # Use the smallest model to reduce memory usage
     model = whisper.load_model("tiny", device=device)
@@ -168,24 +182,115 @@ try:
     with open("outputs/whisper_result.json", "w") as f:
         json.dump(combined_result, f, indent=2)
 
-    # Create a more accurate speech segments map with word boundaries
-    print("Creating improved alignment between diarization and transcription...")
-    
     # Sort segments by start time for correct processing
     all_segments.sort(key=lambda x: x["start"])
     
-    # Dictionary to track which text has been assigned to avoid repetition
+    # Process overlaps using the GitHub recommendation approach
+    print("Processing speaker overlaps...")
+    
+    # Convert diarization DataFrame to detect overlaps
+    # Add a column to track if we should keep the segment
+    diar_df['keep'] = True
+    diar_df['reason'] = None
+
+    # Check for overlaps and mark segments based on GitHub recommendation
+    for i in range(len(diar_df)):
+        # Skip segments already marked for unassignment
+        if not diar_df.at[i, 'keep']:
+            continue
+        
+        # First filter: short segments under general threshold
+        if diar_df.at[i, 'duration'] < SHORT_SEGMENT_THRESHOLD:
+            diar_df.at[i, 'keep'] = False
+            diar_df.at[i, 'reason'] = "short_segment"
+            continue
+        
+        # Look for overlaps with other segments
+        current_start = diar_df.at[i, 'start']
+        current_end = diar_df.at[i, 'end']
+        
+        # Check for overlaps with subsequent segments
+        for j in range(i+1, len(diar_df)):
+            # Skip segments already marked for unassignment
+            if not diar_df.at[j, 'keep']:
+                continue
+                
+            next_start = diar_df.at[j, 'start']
+            next_end = diar_df.at[j, 'end']
+            
+            # No overlap if the next segment starts after current ends
+            if next_start >= current_end:
+                continue
+                
+            # Check for full overlap (one segment completely within another)
+            is_i_inside_j = (current_start >= next_start and current_end <= next_end)
+            is_j_inside_i = (next_start >= current_start and next_end <= current_end)
+            
+            if is_i_inside_j or is_j_inside_i:
+                # Full overlap case
+                
+                # Get the shorter segment
+                shorter_idx = i if diar_df.at[i, 'duration'] < diar_df.at[j, 'duration'] else j
+                longer_idx = j if shorter_idx == i else i
+                
+                # If the shorter segment is less than threshold, mark for unassignment
+                if diar_df.at[shorter_idx, 'duration'] < FULL_OVERLAP_SHORT_THRESHOLD:
+                    diar_df.at[shorter_idx, 'keep'] = False
+                    diar_df.at[shorter_idx, 'reason'] = "short_full_overlap"
+                else:
+                    # Longer full overlaps: divide the longer segment
+                    # Just mark the overlap part in the longer segment
+                    # This is a simplification - in a full implementation, we would actually
+                    # split the longer segment into two parts
+                    
+                    # Mark for logical processing of the overlap later
+                    if longer_idx == i:
+                        diar_df.at[i, 'end'] = diar_df.at[j, 'start']
+                        diar_df.at[i, 'reason'] = "adjusted_for_full_overlap"
+                    else:
+                        diar_df.at[j, 'start'] = diar_df.at[i, 'end']
+                        diar_df.at[j, 'reason'] = "adjusted_for_full_overlap"
+            else:
+                # Partial overlap case
+                overlap_start = max(current_start, next_start)
+                overlap_end = min(current_end, next_end)
+                overlap_duration = overlap_end - overlap_start
+                
+                if (diar_df.at[i, 'duration'] < PARTIAL_OVERLAP_SHORT_THRESHOLD and 
+                    overlap_duration > SIGNIFICANT_OVERLAP_THRESHOLD):
+                    # Short segment with significant overlap
+                    diar_df.at[i, 'keep'] = False
+                    diar_df.at[i, 'reason'] = "short_significant_partial_overlap"
+                elif (diar_df.at[j, 'duration'] < PARTIAL_OVERLAP_SHORT_THRESHOLD and 
+                      overlap_duration > SIGNIFICANT_OVERLAP_THRESHOLD):
+                    # Next segment is short with significant overlap
+                    diar_df.at[j, 'keep'] = False
+                    diar_df.at[j, 'reason'] = "short_significant_partial_overlap"
+                else:
+                    # Longer partial overlap - adjust end of first segment
+                    if i < j:  # Ensure the first segment is modified
+                        diar_df.at[i, 'end'] = next_start
+                        diar_df.at[i, 'reason'] = "adjusted_for_partial_overlap"
+    
+    # Dictionary to store which transcript segments are assigned
     used_segments = set()
     
-    # Improved alignment algorithm to prevent repetition
+    # Process transcription segments for output
     output_lines = []
-    for turn, _, speaker in diarization.itertracks(yield_label=True):
-        start_time = turn.start
-        end_time = turn.end
+    unassigned_segments = []
+    
+    # Apply the diarization to the transcription segments
+    # Only use segments marked 'keep'
+    keep_df = diar_df[diar_df['keep']].copy()
+    keep_df = keep_df.sort_values(by=['start']).reset_index(drop=True)
+    
+    for _, row in keep_df.iterrows():
+        speaker = row['speaker']
+        start_time = row['start']
+        end_time = row['end']
         
-        # Filter segments that significantly overlap with this turn
-        # A segment is considered to belong to a turn if at least the overlap threshold is met
-        turn_segments = []
+        # Find matching transcript segments
+        segment_texts = []
         for i, seg in enumerate(all_segments):
             if i in used_segments:
                 continue  # Skip already used segments
@@ -198,78 +303,45 @@ try:
             overlap_end = min(end_time, seg_end)
             
             if overlap_end > overlap_start:
+                # There is some overlap
                 overlap_duration = overlap_end - overlap_start
                 segment_duration = seg_end - seg_start
                 
-                # If enough of segment overlaps with this turn, use it
-                if overlap_duration > OVERLAP_THRESHOLD * segment_duration:
-                    turn_segments.append(seg)
-                    used_segments.add(i)  # Mark this segment as used
+                # Use it if at least 30% of the segment overlaps with this turn
+                if overlap_duration > 0.3 * segment_duration:
+                    segment_texts.append(seg["text"].strip())
+                    used_segments.add(i)
         
-        # Sort segments by start time within this turn
-        turn_segments.sort(key=lambda x: x["start"])
-        
-        # Extract text from segments
-        segment_texts = [seg["text"].strip() for seg in turn_segments]
         combined_text = " ".join(segment_texts)
-        
-        # Only add non-empty lines
         if combined_text.strip():
-            output_lines.append(f"Speaker {speaker} | {start_time:.2f} - {end_time:.2f} | {combined_text}")
-
-    # For any remaining segments that weren't assigned
-    remaining_segments = []
+            note = f" [{row['reason']}]" if row['reason'] else ""
+            output_lines.append(f"Speaker {speaker} | {start_time:.2f} - {end_time:.2f} | {combined_text}{note}")
+    
+    # Record unassigned diarization segments with reasons
+    for _, row in diar_df[~diar_df['keep']].iterrows():
+        speaker = row['speaker']
+        start_time = row['start']
+        end_time = row['end']
+        reason = row['reason'] if row['reason'] else "unknown"
+        unassigned_segments.append(f"Unassigned Speaker {speaker} | {start_time:.2f} - {end_time:.2f} | [{reason}]")
+    
+    # Include remaining transcript segments that weren't assigned
     for i, seg in enumerate(all_segments):
         if i not in used_segments and seg["text"].strip():
-            remaining_segments.append((i, seg))
+            unassigned_segments.append(f"Unassigned Transcript | {seg['start']:.2f} - {seg['end']:.2f} | {seg['text'].strip()} [no_matching_speaker]")
     
-    # Handle unassigned segments
-    if remaining_segments and FORCE_ASSIGN_ALL:
-        print(f"Assigning {len(remaining_segments)} remaining segments to nearest speakers...")
-        for i, seg in remaining_segments:
-            seg_mid = (seg["start"] + seg["end"]) / 2  # Middle point of segment
-            
-            # Find the closest speaker turn
-            min_distance = float('inf')
-            closest_speaker = None
-            
-            for start, end, speaker in speaker_turns:
-                # Check if segment is inside a turn
-                if start <= seg_mid <= end:
-                    closest_speaker = speaker
-                    break
-                    
-                # Calculate distance to turn boundaries
-                dist_to_start = abs(seg_mid - start)
-                dist_to_end = abs(seg_mid - end)
-                min_dist_to_turn = min(dist_to_start, dist_to_end)
-                
-                if min_dist_to_turn < min_distance:
-                    min_distance = min_dist_to_turn
-                    closest_speaker = speaker
-            
-            if closest_speaker:
-                output_lines.append(f"Speaker {closest_speaker} | {seg['start']:.2f} - {seg['end']:.2f} | {seg['text'].strip()} [reassigned]")
-                used_segments.add(i)
-    
-    # Any segments still unassigned
-    unassigned_texts = []
-    for i, seg in enumerate(all_segments):
-        if i not in used_segments and seg["text"].strip():
-            unassigned_texts.append(f"Unassigned | {seg['start']:.2f} - {seg['end']:.2f} | {seg['text'].strip()}")
-    
-    # Sort output lines by start time for chronological order
+    # Sort output lines by start time
     output_lines.sort(key=lambda x: float(x.split(" | ")[1].split(" - ")[0]))
     
+    # Save final transcript
     print("Saving final transcript...")
     with open("outputs/speaker_transcript.txt", "w") as f:
         for line in output_lines:
             f.write(line + "\n")
         
-        # Add any still unassigned segments at the end
-        if unassigned_texts:
+        if unassigned_segments:
             f.write("\n# Unassigned speech segments:\n")
-            for line in unassigned_texts:
+            for line in unassigned_segments:
                 f.write(line + "\n")
             
     print("Processing completed successfully!")
