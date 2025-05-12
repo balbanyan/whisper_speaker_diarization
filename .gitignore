@@ -1,0 +1,32 @@
+# Python virtual environment
+venv/
+env/
+.env/
+
+# Auth token file
+auth_config.txt
+
+# Output directories - keep directory structure
+outputs/*
+!outputs/.gitkeep
+
+# Input files - keep directory structure but ignore audio files
+inputs/*
+!inputs/.gitkeep
+*.mp3
+*.wav
+*.m4a
+*.aac
+*.ogg
+*.flac
+
+# Temp directory
+temp/
+
+# System files
+.DS_Store
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class 
