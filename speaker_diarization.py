@@ -23,6 +23,12 @@ FULL_OVERLAP_SHORT_THRESHOLD = 1.0  # Threshold for full overlaps
 PARTIAL_OVERLAP_SHORT_THRESHOLD = 2.0  # Threshold for partial overlaps
 SIGNIFICANT_OVERLAP_THRESHOLD = 0.6  # Threshold for significant overlap duration
 
+# Enable/disable overlap resolution strategies
+ENABLE_SHORT_SEGMENT_FILTERING = True  # Enable short segment filtering
+ENABLE_FULL_OVERLAP_RESOLUTION = True  # Enable full overlap resolution
+ENABLE_PARTIAL_OVERLAP_HANDLING = True  # Enable partial overlap handling
+ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT = True  # Enable intelligent segment assignment
+
 # Helper function to run FFmpeg commands
 def run_ffmpeg(input_file, output_file, options=None):
     """Run FFmpeg command to convert/repair audio file"""
@@ -200,7 +206,7 @@ try:
             continue
         
         # First filter: short segments under general threshold
-        if diar_df.at[i, 'duration'] < SHORT_SEGMENT_THRESHOLD:
+        if ENABLE_SHORT_SEGMENT_FILTERING and diar_df.at[i, 'duration'] < SHORT_SEGMENT_THRESHOLD:
             diar_df.at[i, 'keep'] = False
             diar_df.at[i, 'reason'] = "short_segment"
             continue
@@ -226,7 +232,7 @@ try:
             is_i_inside_j = (current_start >= next_start and current_end <= next_end)
             is_j_inside_i = (next_start >= current_start and next_end <= current_end)
             
-            if is_i_inside_j or is_j_inside_i:
+            if ENABLE_FULL_OVERLAP_RESOLUTION and (is_i_inside_j or is_j_inside_i):
                 # Full overlap case
                 
                 # Get the shorter segment
@@ -250,7 +256,7 @@ try:
                     else:
                         diar_df.at[j, 'start'] = diar_df.at[i, 'end']
                         diar_df.at[j, 'reason'] = "adjusted_for_full_overlap"
-            else:
+            elif ENABLE_PARTIAL_OVERLAP_HANDLING and not (is_i_inside_j or is_j_inside_i):
                 # Partial overlap case
                 overlap_start = max(current_start, next_start)
                 overlap_end = min(current_end, next_end)
@@ -307,8 +313,14 @@ try:
                 overlap_duration = overlap_end - overlap_start
                 segment_duration = seg_end - seg_start
                 
-                # Use it if at least 30% of the segment overlaps with this turn
-                if overlap_duration > 0.3 * segment_duration:
+                # Use intelligent segment assignment if enabled, otherwise use any overlap
+                if ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT:
+                    # Use it if at least 30% of the segment overlaps with this turn
+                    if overlap_duration > 0.3 * segment_duration:
+                        segment_texts.append(seg["text"].strip())
+                        used_segments.add(i)
+                else:
+                    # Use any overlap, no matter how small
                     segment_texts.append(seg["text"].strip())
                     used_segments.add(i)
         
@@ -336,6 +348,12 @@ try:
     # Save final transcript
     print("Saving final transcript...")
     with open("outputs/speaker_transcript.txt", "w") as f:
+        f.write("# Overlap resolution settings:\n")
+        f.write(f"# - Short Segment Filtering: {'Enabled' if ENABLE_SHORT_SEGMENT_FILTERING else 'Disabled'}\n")
+        f.write(f"# - Full Overlap Resolution: {'Enabled' if ENABLE_FULL_OVERLAP_RESOLUTION else 'Disabled'}\n")
+        f.write(f"# - Partial Overlap Handling: {'Enabled' if ENABLE_PARTIAL_OVERLAP_HANDLING else 'Disabled'}\n")
+        f.write(f"# - Intelligent Segment Assignment: {'Enabled' if ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT else 'Disabled'}\n\n")
+        
         for line in output_lines:
             f.write(line + "\n")
         

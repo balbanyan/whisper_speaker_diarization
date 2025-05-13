@@ -10,6 +10,7 @@ This project combines Pyannote Audio for speaker diarization and OpenAI's Whispe
 - Advanced overlap resolution strategies based on segment duration
 - Chunk-based processing to avoid memory issues
 - Automatic audio repair for corrupted MP3 files
+- Toggleable overlap resolution strategies for flexible processing
 
 ## Advanced Overlap Handling
 
@@ -19,6 +20,8 @@ The speaker diarization implements sophisticated overlap resolution strategies:
 - **Full Overlap Resolution**: When one segment is fully contained within another, the shorter segment is handled based on duration
 - **Partial Overlap Handling**: Adjusts segment boundaries to eliminate overlaps while preserving speech content
 - **Intelligent Segment Assignment**: Uses overlap percentage to assign transcription to the most likely speaker
+
+All of these strategies can be individually enabled or disabled through configuration flags.
 
 ### Overlap Resolution Logic
 
@@ -86,6 +89,12 @@ SHORT_SEGMENT_THRESHOLD = 0.5        # General short segment threshold
 FULL_OVERLAP_SHORT_THRESHOLD = 1.0   # Threshold for full overlaps
 PARTIAL_OVERLAP_SHORT_THRESHOLD = 2.0 # Threshold for partial overlaps
 SIGNIFICANT_OVERLAP_THRESHOLD = 0.6   # Threshold for significant overlap duration
+
+# Enable/disable overlap resolution strategies
+ENABLE_SHORT_SEGMENT_FILTERING = True  # Enable short segment filtering
+ENABLE_FULL_OVERLAP_RESOLUTION = True  # Enable full overlap resolution
+ENABLE_PARTIAL_OVERLAP_HANDLING = True  # Enable partial overlap handling
+ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT = True  # Enable intelligent segment assignment
 ```
 
 Adjust these values to fine-tune the overlap handling for your specific audio content:
@@ -93,6 +102,8 @@ Adjust these values to fine-tune the overlap handling for your specific audio co
 - **Lower SHORT_SEGMENT_THRESHOLD**: To keep more very brief utterances (e.g., "yes", "uh-huh")
 - **Higher FULL_OVERLAP_SHORT_THRESHOLD**: To be more aggressive in removing contained segments
 - **Lower SIGNIFICANT_OVERLAP_THRESHOLD**: To require less overlap before considering it significant
+
+You can also selectively disable any of the overlap handling strategies by setting their respective enable flags to `False`. This allows you to experiment with different combinations to find the optimal approach for your specific audio content.
 
 ## Usage
 
@@ -109,6 +120,16 @@ The script produces several output files in the `outputs/` directory:
 - `speaker_timestamps.txt`: Speaker timestamps with durations in a readable format
 - `whisper_result.json`: Complete transcript with timestamps
 - `speaker_transcript.txt`: Final transcript with speaker labels, including annotations for adjusted segments
+
+The output file also includes information about which overlap strategies were enabled:
+
+```
+# Overlap resolution settings:
+# - Short Segment Filtering: Enabled
+# - Full Overlap Resolution: Enabled
+# - Partial Overlap Handling: Enabled
+# - Intelligent Segment Assignment: Enabled
+```
 
 ### Example Output
 
