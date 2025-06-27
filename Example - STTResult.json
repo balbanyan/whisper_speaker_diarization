@@ -1,0 +1,1017 @@
+{
+    "Result": [
+        {
+            "Id": "ea4798edfdae4c698195f1ffe83ba928",
+            "DisplayText": "Oh, he has been away from New York. He has been all round the world. He doesn't know many people here, but he's very sociable and he wants to know every one.",
+            "Duration": 90900000,
+            "Offset": 3500000,
+            "SpeakerId": "Speaker-1",
+            "RecognitionStatus": "Success",
+            "NBest": [
+                {
+                    "Confidence": 0.9202836,
+                    "Display": "Oh, he has been away from New York. He has been all round the world. He doesn't know many people here, but he's very sociable and he wants to know every one.",
+                    "ITN": "oh he has been away from new york he has been all round the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "Lexical": "oh he has been away from new york he has been all round the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "MaskedITN": "oh he has been away from new york he has been all round the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "Words": [
+                        {
+                            "Duration": 2900000,
+                            "Offset": 3500000,
+                            "Word": "oh",
+                            "Confidence": "0.82255363"
+                        },
+                        {
+                            "Duration": 1700000,
+                            "Offset": 6500000,
+                            "Word": "he",
+                            "Confidence": "0.8773141"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 8300000,
+                            "Word": "has",
+                            "Confidence": "0.9799503"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 11100000,
+                            "Word": "been",
+                            "Confidence": "0.9549897"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 14100000,
+                            "Word": "away",
+                            "Confidence": "0.945999"
+                        },
+                        {
+                            "Duration": 1900000,
+                            "Offset": 16900000,
+                            "Word": "from",
+                            "Confidence": "0.9929948"
+                        },
+                        {
+                            "Duration": 1400000,
+                            "Offset": 18900000,
+                            "Word": "new",
+                            "Confidence": "0.8887085"
+                        },
+                        {
+                            "Duration": 5400000,
+                            "Offset": 20400000,
+                            "Word": "york",
+                            "Confidence": "0.9890899"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 26500000,
+                            "Word": "he",
+                            "Confidence": "0.7085023"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 29300000,
+                            "Word": "has",
+                            "Confidence": "0.9721083"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 31500000,
+                            "Word": "been",
+                            "Confidence": "0.9875902"
+                        },
+                        {
+                            "Duration": 4100000,
+                            "Offset": 35100000,
+                            "Word": "all",
+                            "Confidence": "0.90116286"
+                        },
+                        {
+                            "Duration": 3900000,
+                            "Offset": 39300000,
+                            "Word": "round",
+                            "Confidence": "0.8477791"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 43300000,
+                            "Word": "the",
+                            "Confidence": "0.81628627"
+                        },
+                        {
+                            "Duration": 7300000,
+                            "Offset": 44700000,
+                            "Word": "world",
+                            "Confidence": "0.99239564"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 52700000,
+                            "Word": "he",
+                            "Confidence": "0.7758031"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 54900000,
+                            "Word": "doesn't",
+                            "Confidence": "0.9761816"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 57700000,
+                            "Word": "know",
+                            "Confidence": "0.82971525"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 59400000,
+                            "Word": "many",
+                            "Confidence": "0.8460729"
+                        },
+                        {
+                            "Duration": 3500000,
+                            "Offset": 61700000,
+                            "Word": "people",
+                            "Confidence": "0.9881748"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 65300000,
+                            "Word": "here",
+                            "Confidence": "0.94875115"
+                        },
+                        {
+                            "Duration": 1200000,
+                            "Offset": 68100000,
+                            "Word": "but",
+                            "Confidence": "0.825495"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 69400000,
+                            "Word": "he's",
+                            "Confidence": "0.8502784"
+                        },
+                        {
+                            "Duration": 2500000,
+                            "Offset": 71100000,
+                            "Word": "very",
+                            "Confidence": "0.98162365"
+                        },
+                        {
+                            "Duration": 5900000,
+                            "Offset": 73700000,
+                            "Word": "sociable",
+                            "Confidence": "0.8812891"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 79700000,
+                            "Word": "and",
+                            "Confidence": "0.9699935"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 81100000,
+                            "Word": "he",
+                            "Confidence": "0.94278276"
+                        },
+                        {
+                            "Duration": 3300000,
+                            "Offset": 82500000,
+                            "Word": "wants",
+                            "Confidence": "0.9817526"
+                        },
+                        {
+                            "Duration": 1100000,
+                            "Offset": 85900000,
+                            "Word": "to",
+                            "Confidence": "0.9654035"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 87100000,
+                            "Word": "know",
+                            "Confidence": "0.96561104"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 89400000,
+                            "Word": "every",
+                            "Confidence": "0.7807323"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 91700000,
+                            "Word": "one",
+                            "Confidence": "0.97073746"
+                        }
+                    ]
+                },
+                {
+                    "Confidence": 0.92129594,
+                    "Display": "oh he has been away from new york he has been all around the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "ITN": "oh he has been away from new york he has been all around the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "Lexical": "oh he has been away from new york he has been all around the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "MaskedITN": "oh he has been away from new york he has been all around the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "Words": [
+                        {
+                            "Duration": 2900000,
+                            "Offset": 3500000,
+                            "Word": "oh",
+                            "Confidence": "0.82255363"
+                        },
+                        {
+                            "Duration": 1700000,
+                            "Offset": 6500000,
+                            "Word": "he",
+                            "Confidence": "0.8773141"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 8300000,
+                            "Word": "has",
+                            "Confidence": "0.9799503"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 11100000,
+                            "Word": "been",
+                            "Confidence": "0.9549897"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 14100000,
+                            "Word": "away",
+                            "Confidence": "0.945999"
+                        },
+                        {
+                            "Duration": 1900000,
+                            "Offset": 16900000,
+                            "Word": "from",
+                            "Confidence": "0.9929948"
+                        },
+                        {
+                            "Duration": 1400000,
+                            "Offset": 18900000,
+                            "Word": "new",
+                            "Confidence": "0.8887085"
+                        },
+                        {
+                            "Duration": 5400000,
+                            "Offset": 20400000,
+                            "Word": "york",
+                            "Confidence": "0.9890899"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 26500000,
+                            "Word": "he",
+                            "Confidence": "0.7085023"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 29300000,
+                            "Word": "has",
+                            "Confidence": "0.9721083"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 31500000,
+                            "Word": "been",
+                            "Confidence": "0.9875902"
+                        },
+                        {
+                            "Duration": 3600000,
+                            "Offset": 35100000,
+                            "Word": "all",
+                            "Confidence": "0.7777498"
+                        },
+                        {
+                            "Duration": 4400000,
+                            "Offset": 38800000,
+                            "Word": "around",
+                            "Confidence": "0.907102"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 43300000,
+                            "Word": "the",
+                            "Confidence": "0.97190654"
+                        },
+                        {
+                            "Duration": 7300000,
+                            "Offset": 44700000,
+                            "Word": "world",
+                            "Confidence": "0.9932272"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 52700000,
+                            "Word": "he",
+                            "Confidence": "0.81337214"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 54900000,
+                            "Word": "doesn't",
+                            "Confidence": "0.9761816"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 57700000,
+                            "Word": "know",
+                            "Confidence": "0.82971525"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 59400000,
+                            "Word": "many",
+                            "Confidence": "0.8460729"
+                        },
+                        {
+                            "Duration": 3500000,
+                            "Offset": 61700000,
+                            "Word": "people",
+                            "Confidence": "0.9881748"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 65300000,
+                            "Word": "here",
+                            "Confidence": "0.94875115"
+                        },
+                        {
+                            "Duration": 1200000,
+                            "Offset": 68100000,
+                            "Word": "but",
+                            "Confidence": "0.825495"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 69400000,
+                            "Word": "he's",
+                            "Confidence": "0.8502784"
+                        },
+                        {
+                            "Duration": 2500000,
+                            "Offset": 71100000,
+                            "Word": "very",
+                            "Confidence": "0.98162365"
+                        },
+                        {
+                            "Duration": 5900000,
+                            "Offset": 73700000,
+                            "Word": "sociable",
+                            "Confidence": "0.8812891"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 79700000,
+                            "Word": "and",
+                            "Confidence": "0.9699935"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 81100000,
+                            "Word": "he",
+                            "Confidence": "0.94278276"
+                        },
+                        {
+                            "Duration": 3300000,
+                            "Offset": 82500000,
+                            "Word": "wants",
+                            "Confidence": "0.9817526"
+                        },
+                        {
+                            "Duration": 1100000,
+                            "Offset": 85900000,
+                            "Word": "to",
+                            "Confidence": "0.9654035"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 87100000,
+                            "Word": "know",
+                            "Confidence": "0.96561104"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 89400000,
+                            "Word": "every",
+                            "Confidence": "0.7807323"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 91700000,
+                            "Word": "one",
+                            "Confidence": "0.97073746"
+                        }
+                    ]
+                },
+                {
+                    "Confidence": 0.91673535,
+                    "Display": "oh he has been away from new york he has been all round the world he doesn't know many people here but he's very sociable and he wants to know everyone",
+                    "ITN": "oh he has been away from new york he has been all round the world he doesn't know many people here but he's very sociable and he wants to know everyone",
+                    "Lexical": "oh he has been away from new york he has been all round the world he doesn't know many people here but he's very sociable and he wants to know everyone",
+                    "MaskedITN": "oh he has been away from new york he has been all round the world he doesn't know many people here but he's very sociable and he wants to know everyone",
+                    "Words": [
+                        {
+                            "Duration": 2900000,
+                            "Offset": 3500000,
+                            "Word": "oh",
+                            "Confidence": "0.82255363"
+                        },
+                        {
+                            "Duration": 1700000,
+                            "Offset": 6500000,
+                            "Word": "he",
+                            "Confidence": "0.8773141"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 8300000,
+                            "Word": "has",
+                            "Confidence": "0.9799503"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 11100000,
+                            "Word": "been",
+                            "Confidence": "0.9549897"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 14100000,
+                            "Word": "away",
+                            "Confidence": "0.945999"
+                        },
+                        {
+                            "Duration": 1900000,
+                            "Offset": 16900000,
+                            "Word": "from",
+                            "Confidence": "0.9929948"
+                        },
+                        {
+                            "Duration": 1400000,
+                            "Offset": 18900000,
+                            "Word": "new",
+                            "Confidence": "0.8887085"
+                        },
+                        {
+                            "Duration": 5400000,
+                            "Offset": 20400000,
+                            "Word": "york",
+                            "Confidence": "0.9890899"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 26500000,
+                            "Word": "he",
+                            "Confidence": "0.7085023"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 29300000,
+                            "Word": "has",
+                            "Confidence": "0.9721083"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 31500000,
+                            "Word": "been",
+                            "Confidence": "0.9875902"
+                        },
+                        {
+                            "Duration": 4100000,
+                            "Offset": 35100000,
+                            "Word": "all",
+                            "Confidence": "0.90116286"
+                        },
+                        {
+                            "Duration": 3900000,
+                            "Offset": 39300000,
+                            "Word": "round",
+                            "Confidence": "0.8477791"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 43300000,
+                            "Word": "the",
+                            "Confidence": "0.81628627"
+                        },
+                        {
+                            "Duration": 7300000,
+                            "Offset": 44700000,
+                            "Word": "world",
+                            "Confidence": "0.99239564"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 52700000,
+                            "Word": "he",
+                            "Confidence": "0.7758031"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 54900000,
+                            "Word": "doesn't",
+                            "Confidence": "0.9761816"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 57700000,
+                            "Word": "know",
+                            "Confidence": "0.82971525"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 59400000,
+                            "Word": "many",
+                            "Confidence": "0.8460729"
+                        },
+                        {
+                            "Duration": 3500000,
+                            "Offset": 61700000,
+                            "Word": "people",
+                            "Confidence": "0.9881748"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 65300000,
+                            "Word": "here",
+                            "Confidence": "0.94875115"
+                        },
+                        {
+                            "Duration": 1200000,
+                            "Offset": 68100000,
+                            "Word": "but",
+                            "Confidence": "0.825495"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 69400000,
+                            "Word": "he's",
+                            "Confidence": "0.8502784"
+                        },
+                        {
+                            "Duration": 2500000,
+                            "Offset": 71100000,
+                            "Word": "very",
+                            "Confidence": "0.98162365"
+                        },
+                        {
+                            "Duration": 5900000,
+                            "Offset": 73700000,
+                            "Word": "sociable",
+                            "Confidence": "0.8812891"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 79700000,
+                            "Word": "and",
+                            "Confidence": "0.9699935"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 81100000,
+                            "Word": "he",
+                            "Confidence": "0.94278276"
+                        },
+                        {
+                            "Duration": 3300000,
+                            "Offset": 82500000,
+                            "Word": "wants",
+                            "Confidence": "0.9817526"
+                        },
+                        {
+                            "Duration": 1100000,
+                            "Offset": 85900000,
+                            "Word": "to",
+                            "Confidence": "0.9654035"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 87100000,
+                            "Word": "know",
+                            "Confidence": "0.96561104"
+                        },
+                        {
+                            "Duration": 5000000,
+                            "Offset": 89400000,
+                            "Word": "everyone",
+                            "Confidence": "0.82298803"
+                        }
+                    ]
+                },
+                {
+                    "Confidence": 0.91774774,
+                    "Display": "oh he has been away from new york he has been all around the world he doesn't know many people here but he's very sociable and he wants to know everyone",
+                    "ITN": "oh he has been away from new york he has been all around the world he doesn't know many people here but he's very sociable and he wants to know everyone",
+                    "Lexical": "oh he has been away from new york he has been all around the world he doesn't know many people here but he's very sociable and he wants to know everyone",
+                    "MaskedITN": "oh he has been away from new york he has been all around the world he doesn't know many people here but he's very sociable and he wants to know everyone",
+                    "Words": [
+                        {
+                            "Duration": 2900000,
+                            "Offset": 3500000,
+                            "Word": "oh",
+                            "Confidence": "0.82255363"
+                        },
+                        {
+                            "Duration": 1700000,
+                            "Offset": 6500000,
+                            "Word": "he",
+                            "Confidence": "0.8773141"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 8300000,
+                            "Word": "has",
+                            "Confidence": "0.9799503"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 11100000,
+                            "Word": "been",
+                            "Confidence": "0.9549897"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 14100000,
+                            "Word": "away",
+                            "Confidence": "0.945999"
+                        },
+                        {
+                            "Duration": 1900000,
+                            "Offset": 16900000,
+                            "Word": "from",
+                            "Confidence": "0.9929948"
+                        },
+                        {
+                            "Duration": 1400000,
+                            "Offset": 18900000,
+                            "Word": "new",
+                            "Confidence": "0.8887085"
+                        },
+                        {
+                            "Duration": 5400000,
+                            "Offset": 20400000,
+                            "Word": "york",
+                            "Confidence": "0.9890899"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 26500000,
+                            "Word": "he",
+                            "Confidence": "0.7085023"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 29300000,
+                            "Word": "has",
+                            "Confidence": "0.9721083"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 31500000,
+                            "Word": "been",
+                            "Confidence": "0.9875902"
+                        },
+                        {
+                            "Duration": 3600000,
+                            "Offset": 35100000,
+                            "Word": "all",
+                            "Confidence": "0.7777498"
+                        },
+                        {
+                            "Duration": 4400000,
+                            "Offset": 38800000,
+                            "Word": "around",
+                            "Confidence": "0.907102"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 43300000,
+                            "Word": "the",
+                            "Confidence": "0.97190654"
+                        },
+                        {
+                            "Duration": 7300000,
+                            "Offset": 44700000,
+                            "Word": "world",
+                            "Confidence": "0.9932272"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 52700000,
+                            "Word": "he",
+                            "Confidence": "0.81337214"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 54900000,
+                            "Word": "doesn't",
+                            "Confidence": "0.9761816"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 57700000,
+                            "Word": "know",
+                            "Confidence": "0.82971525"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 59400000,
+                            "Word": "many",
+                            "Confidence": "0.8460729"
+                        },
+                        {
+                            "Duration": 3500000,
+                            "Offset": 61700000,
+                            "Word": "people",
+                            "Confidence": "0.9881748"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 65300000,
+                            "Word": "here",
+                            "Confidence": "0.94875115"
+                        },
+                        {
+                            "Duration": 1200000,
+                            "Offset": 68100000,
+                            "Word": "but",
+                            "Confidence": "0.825495"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 69400000,
+                            "Word": "he's",
+                            "Confidence": "0.8502784"
+                        },
+                        {
+                            "Duration": 2500000,
+                            "Offset": 71100000,
+                            "Word": "very",
+                            "Confidence": "0.98162365"
+                        },
+                        {
+                            "Duration": 5900000,
+                            "Offset": 73700000,
+                            "Word": "sociable",
+                            "Confidence": "0.8812891"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 79700000,
+                            "Word": "and",
+                            "Confidence": "0.9699935"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 81100000,
+                            "Word": "he",
+                            "Confidence": "0.94278276"
+                        },
+                        {
+                            "Duration": 3300000,
+                            "Offset": 82500000,
+                            "Word": "wants",
+                            "Confidence": "0.9817526"
+                        },
+                        {
+                            "Duration": 1100000,
+                            "Offset": 85900000,
+                            "Word": "to",
+                            "Confidence": "0.9654035"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 87100000,
+                            "Word": "know",
+                            "Confidence": "0.96561104"
+                        },
+                        {
+                            "Duration": 5000000,
+                            "Offset": 89400000,
+                            "Word": "everyone",
+                            "Confidence": "0.82298803"
+                        }
+                    ]
+                },
+                {
+                    "Confidence": 0.9245253,
+                    "Display": "oh he has been away from new york he has been an all round the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "ITN": "oh he has been away from new york he has been an all round the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "Lexical": "oh he has been away from new york he has been an all round the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "MaskedITN": "oh he has been away from new york he has been an all round the world he doesn't know many people here but he's very sociable and he wants to know every one",
+                    "Words": [
+                        {
+                            "Duration": 2900000,
+                            "Offset": 3500000,
+                            "Word": "oh",
+                            "Confidence": "0.82255363"
+                        },
+                        {
+                            "Duration": 1700000,
+                            "Offset": 6500000,
+                            "Word": "he",
+                            "Confidence": "0.8773141"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 8300000,
+                            "Word": "has",
+                            "Confidence": "0.9799503"
+                        },
+                        {
+                            "Duration": 2900000,
+                            "Offset": 11100000,
+                            "Word": "been",
+                            "Confidence": "0.9549897"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 14100000,
+                            "Word": "away",
+                            "Confidence": "0.945999"
+                        },
+                        {
+                            "Duration": 1900000,
+                            "Offset": 16900000,
+                            "Word": "from",
+                            "Confidence": "0.9929948"
+                        },
+                        {
+                            "Duration": 1400000,
+                            "Offset": 18900000,
+                            "Word": "new",
+                            "Confidence": "0.8887085"
+                        },
+                        {
+                            "Duration": 5400000,
+                            "Offset": 20400000,
+                            "Word": "york",
+                            "Confidence": "0.9890899"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 26500000,
+                            "Word": "he",
+                            "Confidence": "0.7085023"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 29300000,
+                            "Word": "has",
+                            "Confidence": "0.9721083"
+                        },
+                        {
+                            "Duration": 2300000,
+                            "Offset": 31500000,
+                            "Word": "been",
+                            "Confidence": "0.9649058"
+                        },
+                        {
+                            "Duration": 500000,
+                            "Offset": 33900000,
+                            "Word": "an",
+                            "Confidence": "0.64789754"
+                        },
+                        {
+                            "Duration": 4100000,
+                            "Offset": 35100000,
+                            "Word": "all",
+                            "Confidence": "0.94510174"
+                        },
+                        {
+                            "Duration": 3900000,
+                            "Offset": 39300000,
+                            "Word": "round",
+                            "Confidence": "0.9607966"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 43300000,
+                            "Word": "the",
+                            "Confidence": "0.81628627"
+                        },
+                        {
+                            "Duration": 7300000,
+                            "Offset": 44700000,
+                            "Word": "world",
+                            "Confidence": "0.99239564"
+                        },
+                        {
+                            "Duration": 2100000,
+                            "Offset": 52700000,
+                            "Word": "he",
+                            "Confidence": "0.7758031"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 54900000,
+                            "Word": "doesn't",
+                            "Confidence": "0.9761816"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 57700000,
+                            "Word": "know",
+                            "Confidence": "0.82971525"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 59400000,
+                            "Word": "many",
+                            "Confidence": "0.8460729"
+                        },
+                        {
+                            "Duration": 3500000,
+                            "Offset": 61700000,
+                            "Word": "people",
+                            "Confidence": "0.9881748"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 65300000,
+                            "Word": "here",
+                            "Confidence": "0.94875115"
+                        },
+                        {
+                            "Duration": 1200000,
+                            "Offset": 68100000,
+                            "Word": "but",
+                            "Confidence": "0.825495"
+                        },
+                        {
+                            "Duration": 1600000,
+                            "Offset": 69400000,
+                            "Word": "he's",
+                            "Confidence": "0.8502784"
+                        },
+                        {
+                            "Duration": 2500000,
+                            "Offset": 71100000,
+                            "Word": "very",
+                            "Confidence": "0.98162365"
+                        },
+                        {
+                            "Duration": 5900000,
+                            "Offset": 73700000,
+                            "Word": "sociable",
+                            "Confidence": "0.8812891"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 79700000,
+                            "Word": "and",
+                            "Confidence": "0.9699935"
+                        },
+                        {
+                            "Duration": 1300000,
+                            "Offset": 81100000,
+                            "Word": "he",
+                            "Confidence": "0.94278276"
+                        },
+                        {
+                            "Duration": 3300000,
+                            "Offset": 82500000,
+                            "Word": "wants",
+                            "Confidence": "0.9817526"
+                        },
+                        {
+                            "Duration": 1100000,
+                            "Offset": 85900000,
+                            "Word": "to",
+                            "Confidence": "0.9654035"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 87100000,
+                            "Word": "know",
+                            "Confidence": "0.96561104"
+                        },
+                        {
+                            "Duration": 2200000,
+                            "Offset": 89400000,
+                            "Word": "every",
+                            "Confidence": "0.7807323"
+                        },
+                        {
+                            "Duration": 2700000,
+                            "Offset": 91700000,
+                            "Word": "one",
+                            "Confidence": "0.97073746"
+                        }
+                    ]
+                }
+            ],
+            "PrimaryLanguage": {
+                "Language": "",
+                "Confidence": ""
+            }
+        }
+    ]
+}
