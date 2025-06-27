@@ -317,8 +317,8 @@ try:
                 if ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT:
                     # Use it if at least 30% of the segment overlaps with this turn
                     if overlap_duration > 0.3 * segment_duration:
-                        segment_texts.append(seg["text"].strip())
-                        used_segments.add(i)
+                            segment_texts.append(seg["text"].strip())
+                            used_segments.add(i)
                 else:
                     # Use any overlap, no matter how small
                     segment_texts.append(seg["text"].strip())
