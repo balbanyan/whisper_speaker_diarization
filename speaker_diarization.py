@@ -11,6 +11,8 @@ import tempfile
 import subprocess
 import pandas as pd
 from typing import List, Tuple, Dict, Set
+import uuid
+from datetime import datetime
 
 # Check if CUDA is available
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -29,6 +31,9 @@ ENABLE_FULL_OVERLAP_RESOLUTION = True  # Enable full overlap resolution
 ENABLE_PARTIAL_OVERLAP_HANDLING = True  # Enable partial overlap handling
 ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT = True  # Enable intelligent segment assignment
 
+# Enable/disable detailed transcript generation
+ENABLE_DETAILED_TRANSCRIPT = True  # Enable detailed transcript with word-level timestamps
+
 # Helper function to run FFmpeg commands
 def run_ffmpeg(input_file, output_file, options=None):
     """Run FFmpeg command to convert/repair audio file"""
@@ -46,6 +51,80 @@ def run_ffmpeg(input_file, output_file, options=None):
         print(f"FFmpeg error: {result.stderr}")
         return False
     return True
+
+def seconds_to_ticks(seconds):
+    """Convert seconds to ticks (1 tick = 100 nanoseconds)"""
+    return int(seconds * 10_000_000)
+
+def create_lexical_text(display_text):
+    """Convert display text to lexical format (lowercase, no punctuation)"""
+    import re
+    # Remove punctuation and convert to lowercase
+    lexical = re.sub(r'[^\w\s]', '', display_text.lower())
+    # Remove extra whitespace
+    lexical = ' '.join(lexical.split())
+    return lexical
+
+def generate_detailed_transcript_segment(segment_data, speaker_assignments, segment_id=None):
+    """
+    Generate a detailed transcript segment in the target JSON format
+    
+    Args:
+        segment_data: Whisper segment with word-level timestamps
+        speaker_assignments: Dict mapping segment indices to speaker IDs
+        segment_id: Optional segment ID, will generate UUID if not provided
+    
+    Returns:
+        Dict in the target JSON format
+    """
+    if segment_id is None:
+        segment_id = str(uuid.uuid4()).replace('-', '')
+    
+    # Get the full text and timing
+    display_text = segment_data.get('text', '').strip()
+    segment_start = segment_data.get('start', 0)
+    segment_end = segment_data.get('end', 0)
+    segment_duration = segment_end - segment_start
+    
+    # Get speaker ID from assignments
+    speaker_id = speaker_assignments.get(segment_data.get('segment_index', 0), 'SPEAKER_UNKNOWN')
+    
+    # Create lexical version
+    lexical_text = create_lexical_text(display_text)
+    
+    # Process words if available
+    words_data = []
+    if 'words' in segment_data and segment_data['words']:
+        for word_info in segment_data['words']:
+            word_start = word_info.get('start', 0)
+            word_end = word_info.get('end', 0)
+            word_duration = word_end - word_start
+            word_text = word_info.get('word', '').strip()
+            
+            words_data.append({
+                "Duration": seconds_to_ticks(word_duration),
+                "Offset": seconds_to_ticks(word_start),
+                "Word": word_text
+            })
+    
+    # Create the segment structure
+    segment_result = {
+        "Id": segment_id,
+        "DisplayText": display_text,
+        "Duration": seconds_to_ticks(segment_duration),
+        "Offset": seconds_to_ticks(segment_start),
+        "SpeakerId": speaker_id,
+        "RecognitionStatus": "Success",
+        "NBest": [
+            {
+                "Display": display_text,
+                "Lexical": lexical_text,
+                "Words": words_data
+            }
+        ]
+    }
+    
+    return segment_result
 
 try:
     # Try to read auth token from config file
@@ -135,6 +214,7 @@ try:
     # Process in chunks of 30 seconds (much smaller)
     CHUNK_SIZE = 30 * 1000  # 30 seconds in milliseconds
     all_segments = []
+    all_segments_with_words = []  # Store segments with word-level data for detailed transcript
     
     print(f"Total audio duration: {audio_duration:.2f} seconds")
     print(f"Processing in chunks of {CHUNK_SIZE/1000:.0f} seconds")
@@ -154,20 +234,31 @@ try:
             chunk.export(temp_path, format="wav")
         
         try:
-            # Transcribe the chunk - disable word timestamps to reduce complexity
+            # Transcribe the chunk - enable word timestamps for detailed output
             result = model.transcribe(
                 temp_path,
-                word_timestamps=False,  # Disable word timestamps to reduce complexity
+                word_timestamps=True,  # Enable word timestamps for detailed transcript generation
                 verbose=False,
                 fp16=False
             )
             
             # Adjust timestamps to account for chunk position
-            for segment in result["segments"]:
+            for idx, segment in enumerate(result["segments"]):
                 segment["start"] += start_ms / 1000
                 segment["end"] += start_ms / 1000
+                segment["segment_index"] = len(all_segments) + idx  # Add global segment index
+                
+                # Adjust word timestamps if they exist
+                if "words" in segment and segment["words"]:
+                    for word in segment["words"]:
+                        word["start"] += start_ms / 1000
+                        word["end"] += start_ms / 1000
                 
             all_segments.extend(result["segments"])
+            
+            # Store segments with word data for detailed transcript generation
+            if ENABLE_DETAILED_TRANSCRIPT:
+                all_segments_with_words.extend(result["segments"])
             
         except Exception as e:
             print(f"Error processing chunk {i+1}: {str(e)}")
@@ -281,6 +372,9 @@ try:
     # Dictionary to store which transcript segments are assigned
     used_segments = set()
     
+    # Dictionary to store speaker assignments for detailed transcript
+    segment_speaker_assignments = {}
+    
     # Process transcription segments for output
     output_lines = []
     unassigned_segments = []
@@ -319,10 +413,14 @@ try:
                     if overlap_duration > 0.3 * segment_duration:
                             segment_texts.append(seg["text"].strip())
                             used_segments.add(i)
+                            # Store speaker assignment for detailed transcript
+                            segment_speaker_assignments[seg.get("segment_index", i)] = speaker
                 else:
                     # Use any overlap, no matter how small
                     segment_texts.append(seg["text"].strip())
                     used_segments.add(i)
+                    # Store speaker assignment for detailed transcript
+                    segment_speaker_assignments[seg.get("segment_index", i)] = speaker
         
         combined_text = " ".join(segment_texts)
         if combined_text.strip():
@@ -352,7 +450,8 @@ try:
         f.write(f"# - Short Segment Filtering: {'Enabled' if ENABLE_SHORT_SEGMENT_FILTERING else 'Disabled'}\n")
         f.write(f"# - Full Overlap Resolution: {'Enabled' if ENABLE_FULL_OVERLAP_RESOLUTION else 'Disabled'}\n")
         f.write(f"# - Partial Overlap Handling: {'Enabled' if ENABLE_PARTIAL_OVERLAP_HANDLING else 'Disabled'}\n")
-        f.write(f"# - Intelligent Segment Assignment: {'Enabled' if ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT else 'Disabled'}\n\n")
+        f.write(f"# - Intelligent Segment Assignment: {'Enabled' if ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT else 'Disabled'}\n")
+        f.write(f"# - Detailed Transcript Generation: {'Enabled' if ENABLE_DETAILED_TRANSCRIPT else 'Disabled'}\n\n")
         
         for line in output_lines:
             f.write(line + "\n")
@@ -361,6 +460,31 @@ try:
             f.write("\n# Unassigned speech segments:\n")
             for line in unassigned_segments:
                 f.write(line + "\n")
+    
+    # Generate detailed transcript if enabled
+    if ENABLE_DETAILED_TRANSCRIPT:
+        print("Generating detailed transcript with word-level timestamps...")
+        
+        detailed_transcript_results = []
+        
+        for segment in all_segments_with_words:
+            if segment.get("text", "").strip():  # Only process non-empty segments
+                detailed_segment = generate_detailed_transcript_segment(
+                    segment, 
+                    segment_speaker_assignments
+                )
+                detailed_transcript_results.append(detailed_segment)
+        
+        # Create the final detailed transcript structure
+        detailed_transcript = {
+            "Result": detailed_transcript_results
+        }
+        
+        # Save detailed transcript
+        with open("outputs/detailed_transcript.json", "w") as f:
+            json.dump(detailed_transcript, f, indent=2)
+        
+        print(f"Detailed transcript saved with {len(detailed_transcript_results)} segments")
             
     print("Processing completed successfully!")
     

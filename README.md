@@ -5,12 +5,13 @@ This project combines Pyannote Audio for speaker diarization and OpenAI's Whispe
 ## Features
 
 - Speaker diarization using Pyannote Audio
-- Transcription using OpenAI's Whisper
+- Transcription using OpenAI's Whisper with word-level timestamps
 - Intelligent overlap handling for improved speaker attribution
 - Advanced overlap resolution strategies based on segment duration
 - Chunk-based processing to avoid memory issues
 - Automatic audio repair for corrupted MP3 files
 - Toggleable overlap resolution strategies for flexible processing
+- Detailed transcript generation with structured JSON output
 
 ## Advanced Overlap Handling
 
@@ -95,6 +96,9 @@ ENABLE_SHORT_SEGMENT_FILTERING = True  # Enable short segment filtering
 ENABLE_FULL_OVERLAP_RESOLUTION = True  # Enable full overlap resolution
 ENABLE_PARTIAL_OVERLAP_HANDLING = True  # Enable partial overlap handling
 ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT = True  # Enable intelligent segment assignment
+
+# Enable/disable detailed transcript generation
+ENABLE_DETAILED_TRANSCRIPT = True  # Enable detailed transcript with word-level timestamps
 ```
 
 Adjust these values to fine-tune the overlap handling for your specific audio content:
@@ -120,6 +124,7 @@ The script produces several output files in the `outputs/` directory:
 - `speaker_timestamps.txt`: Speaker timestamps with durations in a readable format
 - `whisper_result.json`: Complete transcript with timestamps
 - `speaker_transcript.txt`: Final transcript with speaker labels, including annotations for adjusted segments
+- `detailed_transcript.json`: Structured JSON format with word-level timestamps and speaker assignments
 
 The output file also includes information about which overlap strategies were enabled:
 
@@ -129,6 +134,7 @@ The output file also includes information about which overlap strategies were en
 # - Full Overlap Resolution: Enabled
 # - Partial Overlap Handling: Enabled
 # - Intelligent Segment Assignment: Enabled
+# - Detailed Transcript Generation: Enabled
 ```
 
 ### Example Output
@@ -141,6 +147,50 @@ Speaker SPEAKER_02 | 22.31 - 25.18 | Has finance approved the initial allocation
 # Unassigned speech segments:
 Unassigned Speaker SPEAKER_00 | 21.89 - 22.15 | [short_significant_partial_overlap]
 ```
+
+### Detailed Transcript Output
+
+When `ENABLE_DETAILED_TRANSCRIPT` is enabled, the system also generates a structured JSON file with word-level timestamps:
+
+```json
+{
+    "Result": [
+        {
+            "Id": "ea4798edfdae4c698195f1ffe83ba928",
+            "DisplayText": "I think we should proceed with the new project plan.",
+            "Duration": 54900000,
+            "Offset": 102500000,
+            "SpeakerId": "SPEAKER_00",
+            "RecognitionStatus": "Success",
+            "NBest": [
+                {
+                    "Display": "I think we should proceed with the new project plan.",
+                    "Lexical": "i think we should proceed with the new project plan",
+                    "Words": [
+                        {
+                            "Duration": 1000000,
+                            "Offset": 102500000,
+                            "Word": "I"
+                        },
+                        {
+                            "Duration": 4000000,
+                            "Offset": 103600000,
+                            "Word": "think"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+**Key Features:**
+- **Timestamps in Ticks**: Duration and Offset are in 100-nanosecond units (ticks)
+- **DisplayText**: Original transcription with punctuation and capitalization
+- **Lexical**: Lowercase version without punctuation
+- **Word-level Data**: Individual word timestamps and text
+- **Speaker Integration**: Uses the same overlap resolution logic as the main transcript
 
 ## Troubleshooting
 

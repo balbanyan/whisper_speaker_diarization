@@ -71,6 +71,9 @@ ENABLE_FULL_OVERLAP_RESOLUTION = True
 ENABLE_PARTIAL_OVERLAP_HANDLING = True
 ENABLE_INTELLIGENT_SEGMENT_ASSIGNMENT = True
 
+# Output format toggles
+ENABLE_DETAILED_TRANSCRIPT = True       # Enable detailed transcript with word-level timestamps
+
 # Processing settings
 CHUNK_SIZE = 30 * 1000  # 30 seconds in milliseconds for Whisper
 ```
@@ -83,12 +86,17 @@ speaker-diarization/
 ├── README.md                   # User documentation
 ├── LLM_CODEBASE_CONTEXT.md     # This context file for LLM reference
 ├── auth_config.txt             # Hugging Face token (gitignored)
+├── test_speaker_diarization.py # Unit tests for core functionality
+├── test_current_system.py      # Integration tests for system verification
+├── run_tests.py                # Test runner script
+├── TESTING.md                  # Testing documentation and guidelines
 ├── inputs/                     # Audio files for processing
 ├── outputs/                    # Generated results
 │   ├── diarization.rttm        # Raw diarization output
 │   ├── speaker_timestamps.txt  # Readable timestamps
 │   ├── whisper_result.json     # Complete transcription
-│   └── speaker_transcript.txt  # Final aligned transcript
+│   ├── speaker_transcript.txt  # Final aligned transcript
+│   └── detailed_transcript.json # Detailed transcript with word-level timestamps
 └── temp/                       # Temporary files during processing
 ```
 
@@ -108,9 +116,9 @@ speaker-diarization/
 ### 3. Transcription (Whisper)
 - Processes in 30-second chunks to manage memory
 - Uses "tiny" model by default for speed
-- Word timestamps disabled by default (but can be enabled)
+- Word timestamps enabled for detailed transcript generation
 - Adjusts timestamps to account for chunk position
-- Output: List of segments with text and timestamps
+- Output: List of segments with text and word-level timestamps
 
 ### 4. Overlap Resolution
 - Applies enabled strategies in order:
@@ -131,6 +139,7 @@ speaker-diarization/
 - Includes reason annotations for adjusted segments
 - Lists unassigned segments with explanations
 - Shows which strategies were enabled
+- Generates detailed transcript with word-level timestamps (if enabled)
 
 ## Key Data Structures
 
@@ -151,7 +160,40 @@ speaker-diarization/
 {
     'start': 10.2,
     'end': 15.8,
-    'text': 'This is what was said.'
+    'text': 'This is what was said.',
+    'words': [
+        {'start': 10.2, 'end': 10.8, 'word': 'This'},
+        {'start': 10.9, 'end': 11.2, 'word': 'is'},
+        {'start': 11.3, 'end': 11.6, 'word': 'what'},
+        {'start': 11.7, 'end': 12.0, 'word': 'was'},
+        {'start': 12.1, 'end': 12.5, 'word': 'said.'}
+    ]
+}
+```
+
+### Detailed Transcript Segments
+```python
+{
+    "Id": "ea4798edfdae4c698195f1ffe83ba928",
+    "DisplayText": "This is what was said.",
+    "Duration": 58000000,  # Duration in ticks (100ns units)
+    "Offset": 102000000,   # Start time in ticks
+    "SpeakerId": "SPEAKER_00",
+    "RecognitionStatus": "Success",
+    "NBest": [
+        {
+            "Display": "This is what was said.",
+            "Lexical": "this is what was said",
+            "Words": [
+                {
+                    "Duration": 6000000,
+                    "Offset": 102000000,
+                    "Word": "This"
+                },
+                # ... more words
+            ]
+        }
+    ]
 }
 ```
 
@@ -168,6 +210,35 @@ Speaker SPEAKER_01 | 15.64 - 22.31 | I agree with that approach.
 # Unassigned speech segments:
 Unassigned Speaker SPEAKER_02 | 21.89 - 22.15 | [short_significant_partial_overlap]
 Unassigned Transcript | 52.32 - 54.32 | Oh, yeah. [no_matching_speaker]
+```
+
+### Detailed Transcript Output (JSON)
+```json
+{
+    "Result": [
+        {
+            "Id": "ea4798edfdae4c698195f1ffe83ba928",
+            "DisplayText": "Hello, how are you today?",
+            "Duration": 25000000,
+            "Offset": 5000000,
+            "SpeakerId": "SPEAKER_00",
+            "RecognitionStatus": "Success",
+            "NBest": [
+                {
+                    "Display": "Hello, how are you today?",
+                    "Lexical": "hello how are you today",
+                    "Words": [
+                        {
+                            "Duration": 5000000,
+                            "Offset": 5000000,
+                            "Word": "Hello"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
 ```
 
 ## Memory Management
@@ -198,17 +269,60 @@ Unassigned Transcript | 52.32 - 54.32 | Oh, yeah. [no_matching_speaker]
 
 ## Testing Strategy
 
+### Unit Tests (`test_speaker_diarization.py`)
+Comprehensive test suite covering:
+- **Overlap Resolution**: Short segment filtering, full/partial overlap detection
+- **Speaker Assignment**: Overlap calculation, 30% threshold logic
+- **Configuration**: Parameter validation, strategy toggles
+- **Audio Processing**: Chunking logic, timestamp adjustment
+- **Output Generation**: Line parsing, timestamp sorting
+- **Error Handling**: Empty data, invalid inputs
+- **Memory Management**: CUDA availability, chunk size validation
+- **Integration**: File creation, JSON structure validation
+
+### Integration Tests (`test_current_system.py`)
+System-level verification:
+- Audio file creation and processing infrastructure
+- Configuration parameter accessibility
+- Expected output file structure
+- Test environment setup and cleanup
+
+### Experimental Testing
 The toggleable overlap strategies allow systematic testing:
 1. Run with all strategies enabled (baseline)
 2. Disable one strategy at a time to measure impact
 3. Compare results to identify optimal combination for specific audio types
 4. Use output annotations to understand what changes were made
 
+### Running Tests
+```bash
+# Run all tests (recommended)
+python run_tests.py
+
+# Or run individual test suites:
+# Run unit tests
+python test_speaker_diarization.py
+
+# Run integration tests  
+python test_current_system.py
+
+# All test suites should show 100% success rate before making changes
+```
+
 ## Change Tracking
 
 This section tracks modifications made to the codebase and the reasoning behind them:
 
-### May 13, 2025
+### May 13, 2025 (Latest)
+- **Implemented detailed transcript generation**: Added word-level timestamp support with JSON output format
+- **Added new configuration flag**: `ENABLE_DETAILED_TRANSCRIPT` to toggle detailed transcript generation
+- **Enhanced Whisper processing**: Enabled word-level timestamps for detailed output generation
+- **Created helper functions**: `seconds_to_ticks()`, `create_lexical_text()`, `generate_detailed_transcript_segment()`
+- **Added new output file**: `outputs/detailed_transcript.json` with structured JSON format
+- **Updated test suite**: Added 6 new tests for detailed transcript functionality (25 total tests)
+- **Enhanced documentation**: Updated context file with detailed transcript structure and examples
+
+### May 13, 2025 (Earlier)
 - **Added toggleable overlap resolution strategies**: Implemented configuration flags for all 4 overlap strategies to allow experimental testing
 - **Enhanced documentation**: Updated README.md with toggleable strategy information
 - **Fixed indentation error**: Resolved Python syntax error in speaker_diarization.py around line 317-319
@@ -236,4 +350,32 @@ This section tracks modifications made to the codebase and the reasoning behind 
 2. **Real-time Processing**: Optimize for streaming audio
 3. **Advanced Overlap Handling**: More sophisticated boundary adjustment algorithms 
 4. **Make code more modular**: Optimize codebase to be more flexible and readable
-5. **Add word-level timestamps**: Add word-level timestamps with whipser
+
+## Implemented Features
+
+1. **Detailed Transcript Output**: ✅ **COMPLETED**
+   - **DisplayText**: Direct Whisper output with punctuation/capitalization
+   - **Lexical**: Lowercase, no punctuation version (implemented)
+   - **Word-level timestamps**: Full word timing in ticks format
+   - **Speaker integration**: Uses existing overlap resolution logic
+   - **JSON structure**: Compatible format with structured output
+   - **Toggleable**: Can be enabled/disabled via `ENABLE_DETAILED_TRANSCRIPT`
+
+## Planned Features (To Be Added Later)
+
+1. **Enhanced Text Normalization**:
+   - **ITN Support**: Inverse Text Normalization for English/Arabic (convert spoken numbers to written form)
+   - **Advanced formatting**: "twenty two" → "22", "percent" → "%"
+   - **Arabic numerals**: Proper handling of Arabic numerals and spoken forms
+   - **Currency, dates, abbreviations**: For both English and Arabic
+
+2. **Enhanced Mixed Language Processing**: 
+   - Currently Whisper processes segments by dominant language
+   - Future: Word-level language detection and appropriate processing
+   - Challenge: Arabic words may be transliterated as English phonetics and vice versa
+
+3. **Confidence Scores**: If/when available from Whisper or alternative libraries
+   - Would require external libraries like `whisper-timestamped`
+   - Currently excluded to maintain simplicity
+
+4. **NBest Alternatives**: Multiple transcription hypotheses (when Whisper supports it)
