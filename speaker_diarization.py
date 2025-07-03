@@ -152,19 +152,19 @@ try:
         "pyannote/speaker-diarization-3.1",
         use_auth_token=pyannote_auth_token)
 
-    input_audio_path = "inputs/meeting_trimmed.mp3"
+    input_audio_path = "inputs/harvard.wav"
     
-    # First, try to repair the MP3 file using FFmpeg
-    print("Repairing audio file with FFmpeg...")
+    # Convert audio file to WAV format using FFmpeg
+    print("Converting audio file to WAV format with FFmpeg...")
     os.makedirs("temp", exist_ok=True)
-    repaired_path = os.path.join("temp", "audio_repaired.mp3")
+    wav_path = os.path.join("temp", "audio_converted.wav")
     
-    # Try to repair by re-encoding the MP3 (keeping MP3 format)
-    if run_ffmpeg(input_audio_path, repaired_path, ["-c:a", "libmp3lame", "-q:a", "2"]):
-        audio_path = repaired_path
-        print(f"Audio repaired and re-encoded to: {repaired_path}")
+    # Convert to WAV with optimal settings for Whisper
+    if run_ffmpeg(input_audio_path, wav_path, ["-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le"]):
+        audio_path = wav_path
+        print(f"Audio converted to WAV: {wav_path}")
     else:
-        print("FFmpeg repair failed. Trying to use the original file.")
+        print("FFmpeg conversion failed. Trying to use the original file.")
         audio_path = input_audio_path
 
     print("Running speaker diarization...")
@@ -204,15 +204,15 @@ try:
     
     print("Loading Whisper model...")
     # Use the smallest model to reduce memory usage
-    model = whisper.load_model("tiny", device=device)
+    model = whisper.load_model("small", device=device)
     
     # Load audio 
     print("Processing audio...")
     audio = AudioSegment.from_file(audio_path)
     audio_duration = len(audio) / 1000  # in seconds
     
-    # Process in chunks of 30 seconds (much smaller)
-    CHUNK_SIZE = 30 * 1000  # 30 seconds in milliseconds
+    # Process in chunks of 10 seconds (smaller chunks)
+    CHUNK_SIZE = 10 * 1000  # 10 seconds in milliseconds
     all_segments = []
     all_segments_with_words = []  # Store segments with word-level data for detailed transcript
     
@@ -489,8 +489,8 @@ try:
     print("Processing completed successfully!")
     
     # Clean up temporary files
-    if os.path.exists(repaired_path):
-        os.remove(repaired_path)
+    if os.path.exists(wav_path):
+        os.remove(wav_path)
 
 except Exception as e:
     print(f"An error occurred: {str(e)}", file=sys.stderr)
